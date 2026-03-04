@@ -383,14 +383,34 @@
       radial-gradient(ellipse at 80% 80%, rgba(0,200,248,0.06), transparent 40%);
   }
 
-  /* OPINION CARD - bold orange-red */
-  .card-opinion {
-    background:linear-gradient(145deg, #0f0500 0%, #1a0800 60%, #0a0400 100%);
-    border:1px solid rgba(251,146,60,0.4);
+  /* NEWS CARD - standard editorial newspaper style */
+  .card-news {
+    background:linear-gradient(145deg, #0a0a0a 0%, #111111 60%, #080808 100%);
+    border:1px solid rgba(255,255,255,0.12);
   }
-  .card-opinion::before {
-    content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
-    background:linear-gradient(180deg, #ef4444, #fb923c, #fbbf24);
+  .card-news::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:5px;
+    background:linear-gradient(90deg, #ffffff, #cccccc, #ffffff);
+  }
+  .card-news::after {
+    content:''; position:absolute; bottom:0; right:0;
+    width:200px; height:200px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.04), transparent 65%);
+  }
+
+  /* POST CARD - Facebook blue/social */
+  .card-post {
+    background:linear-gradient(145deg, #000d1a 0%, #001428 60%, #00080f 100%);
+    border:1px solid rgba(59,130,246,0.45);
+  }
+  .card-post::before {
+    content:''; position:absolute; top:-40px; left:-40px;
+    width:200px; height:200px; border-radius:50%;
+    background:radial-gradient(circle, rgba(59,130,246,0.15), transparent 65%);
+  }
+  .card-post::after {
+    content:''; position:absolute; bottom:0; right:0; left:0; height:3px;
+    background:linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
   }
 
   /* JOKE CARD - fun teal & pink */
@@ -618,10 +638,15 @@
         <div class="label">Legacy Card</div>
         <div class="desc">How you'll be remembered</div>
       </div>
-      <div class="card-type-btn" onclick="selectCard('opinion')">
-        <span class="icon">😤</span>
-        <div class="label">Opinion Card</div>
-        <div class="desc">Your boldest take</div>
+      <div class="card-type-btn" onclick="selectCard('news')">
+        <span class="icon">📰</span>
+        <div class="label">News Card</div>
+        <div class="desc">Break a headline</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('post')">
+        <span class="icon">📣</span>
+        <div class="label">Post Card</div>
+        <div class="desc">Your Facebook moment</div>
       </div>
       <div class="card-type-btn" onclick="selectCard('joke')" style="grid-column:span 1">
         <span class="icon">😂</span>
@@ -972,32 +997,86 @@ const CARDS = {
     }
   },
 
-  opinion: {
-    label:'Opinion Card', icon:'😤', cls:'card-opinion',
-    accent:'#fb923c',
+  news: {
+    label:'News Card', icon:'📰', cls:'card-news',
+    accent:'#ef4444',
     questions:[
-      {id:'name', label:'Your Name', q:'Who dares to have this opinion?', placeholder:'Your name', type:'input'},
-      {id:'opinion', label:'The Opinion', q:'What is your most unpopular or bold opinion?', placeholder:'e.g. Pineapple absolutely belongs on pizza', type:'textarea'},
-      {id:'defend', label:'Your Defense', q:'Defend your opinion in one sentence!', placeholder:'e.g. Sweet + savory is a flavor combination that science supports', type:'textarea'},
+      {id:'outlet', label:'News Outlet', q:'What is the name of your news outlet or source?', placeholder:'e.g. Neuroculas Daily, BD Tech News, My City Times', type:'input'},
+      {id:'headline', label:'The Headline', q:'Write your breaking news headline!', placeholder:'e.g. Local Developer Launches App Used by 1 Million People', type:'textarea'},
+      {id:'summary', label:'News Summary', q:'Give a short summary of the story (2-3 sentences).', placeholder:'e.g. A 22-year-old developer from Gazipur has released...', type:'textarea'},
+      {id:'reporter', label:'Reporter Name', q:'Who is reporting this story?', placeholder:'e.g. Staff Reporter, John Doe, Special Correspondent', type:'input'},
     ],
     render(d) {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
       return `
         <div class="card-grid"></div>
-        <div class="card-header">
-          <div class="card-type-tag" style="border-color:#fb923c;color:#fb923c;background:rgba(251,146,60,0.1)">😤 Hot Take</div>
+        <div style="position:relative;z-index:1;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid rgba(255,255,255,0.15)">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font-family:'Orbitron',sans-serif;font-size:clamp(14px,3vw,20px);font-weight:900;color:#ffffff;letter-spacing:2px;text-transform:uppercase">${d.outlet}</div>
+            ${miniLogo()}
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+            <div style="background:#ffffff;color:#0a0a0a;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;padding:3px 10px;border-radius:3px">BREAKING NEWS</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.35);font-family:'Rajdhani',sans-serif;letter-spacing:1px">${dateStr}</div>
+          </div>
+        </div>
+        <div style="position:relative;z-index:1;margin-bottom:18px">
+          <div style="font-family:'Exo 2',sans-serif;font-size:clamp(17px,4vw,26px);font-weight:700;color:#ffffff;line-height:1.3;margin-bottom:14px">${d.headline}</div>
+          <div style="height:2px;width:48px;background:#ffffff;margin-bottom:14px;border-radius:2px"></div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;font-weight:300">${d.summary}</div>
+        </div>
+        <div style="position:relative;z-index:1;margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);font-family:'Rajdhani',sans-serif">By <span style="color:#ffffff;font-weight:700">${d.reporter}</span></div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.2);font-family:'Orbitron',sans-serif;letter-spacing:1px">NEUROCULAS</div>
+        </div>
+      `;
+    }
+  },
+
+  post: {
+    label:'Post Card', icon:'📣', cls:'card-post',
+    accent:'#3b82f6',
+    questions:[
+      {id:'name', label:'Your Name', q:'What is your name (as shown on Facebook)?', placeholder:'e.g. Rahim Ahmed, Sarah K.', type:'input'},
+      {id:'status', label:'Post Text', q:'What do you want to post? Write your Facebook status!', placeholder:'e.g. Just landed my dream job at a top tech company! All those late nights finally paid off 🙏', type:'textarea'},
+      {id:'feeling', label:'Feeling / Activity', q:'What are you feeling or doing? (optional emoji welcome!)', placeholder:'e.g. Feeling grateful 🙏, Celebrating 🎉, Thinking 💭', type:'input'},
+      {id:'location', label:'Location', q:'Add a location to your post? (optional)', placeholder:'e.g. Dhaka, Bangladesh · Working from Home · No Location', type:'input'},
+    ],
+    render(d) {
+      const now = new Date();
+      const timeStr = now.toLocaleString('en-US', {month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'});
+      const initials = d.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      const hasLocation = d.location && d.location.toLowerCase() !== 'no location' && d.location.trim() !== '';
+      return `
+        <div class="card-grid"></div>
+        <div style="position:relative;z-index:1;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#3b82f6);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-weight:900;font-size:14px;color:#fff;box-shadow:0 4px 14px rgba(59,130,246,0.4);flex-shrink:0">${initials}</div>
+            <div>
+              <div style="font-family:'Exo 2',sans-serif;font-weight:700;font-size:16px;color:#fff">${d.name}</div>
+              <div style="font-size:11px;color:rgba(200,220,255,0.4);margin-top:2px;display:flex;align-items:center;gap:5px">
+                <span>${timeStr}</span>
+                ${hasLocation ? `<span style="color:rgba(59,130,246,0.6)">·</span><span style="color:rgba(59,130,246,0.7)">📍 ${d.location}</span>` : ''}
+              </div>
+            </div>
+          </div>
           ${miniLogo()}
         </div>
-        <div style="position:relative;z-index:1;margin:12px 0 20px;padding-left:16px">
-          <div style="font-size:10px;color:rgba(200,220,255,0.4);letter-spacing:2px;text-transform:uppercase;font-family:'Orbitron',sans-serif;margin-bottom:6px">${d.name} says:</div>
-          <div style="font-size:clamp(18px,4vw,26px);font-family:'Exo 2',sans-serif;font-weight:700;color:#fb923c;line-height:1.3">${d.opinion}</div>
+        ${d.feeling ? `<div style="position:relative;z-index:1;font-size:11px;color:rgba(200,220,255,0.45);margin-bottom:12px;font-style:italic">— ${d.feeling}</div>` : ''}
+        <div style="position:relative;z-index:1;font-family:'Rajdhani',sans-serif;font-size:clamp(15px,3.5vw,19px);color:rgba(230,240,255,0.9);line-height:1.7;font-weight:400;padding:18px;background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.18);border-radius:14px;margin-bottom:18px">${d.status}</div>
+        <div style="position:relative;z-index:1;display:flex;align-items:center;gap:18px;padding-top:12px;border-top:1px solid rgba(59,130,246,0.2)">
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(200,220,255,0.4)">
+            <span style="font-size:16px">👍</span> Like
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(200,220,255,0.4)">
+            <span style="font-size:16px">💬</span> Comment
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(200,220,255,0.4)">
+            <span style="font-size:16px">↗️</span> Share
+          </div>
+          <div style="margin-left:auto;font-size:9px;color:rgba(59,130,246,0.4);font-family:'Orbitron',sans-serif;letter-spacing:1px">NEUROCULAS</div>
         </div>
-        <div class="card-divider" style="color:#fb923c"></div>
-        <div class="card-field">
-          <div class="card-field-label">The Defense</div>
-          <div class="card-field-value" style="font-style:italic">"${d.defend}"</div>
-        </div>
-        <div style="font-size:40px;margin-top:auto;position:relative;z-index:1">😤</div>
-        ${cardFooter()}
       `;
     }
   },
