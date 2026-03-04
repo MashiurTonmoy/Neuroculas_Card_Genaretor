@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neuroculas Card Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Exo+2:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --navy: #040d21;
+    --navy2: #071530;
+    --blue: #1a4fd6;
+    --sky: #00c8f8;
+    --purple: #7c3aed;
+    --cyan: #06b6d4;
+    --white: #f0f6ff;
+    --gold: #f59e0b;
+    --card-bg: rgba(10,25,60,0.92);
+    --glass: rgba(0,200,248,0.08);
+    --border: rgba(0,200,248,0.25);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated bg */
+  body::before {
+    content:'';
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(28,79,214,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(0,200,248,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(124,58,237,0.08) 0%, transparent 60%);
+    pointer-events:none;
+  }
+
+  /* Stars */
+  .stars {
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(0,200,248,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 10%, rgba(0,200,248,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 25%, rgba(0,200,248,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 10%, rgba(0,200,248,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 15% 80%, rgba(124,58,237,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 45%, rgba(0,200,248,0.4) 0%, transparent 100%);
+  }
+
+  .container { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 20px; }
+
+  /* HERO */
+  .hero {
+    text-align:center; padding:60px 20px 50px;
+    position:relative;
+  }
+
+  .logo-wrap {
+    display:flex; align-items:center; justify-content:center; gap:18px;
+    margin-bottom:36px;
+  }
+
+  .logo-icon {
+    width:64px; height:64px; position:relative;
+    flex-shrink:0;
+  }
+
+  .orbit-ring {
+    position:absolute; border-radius:50%;
+    animation: spin linear infinite;
+    border-style:solid;
+  }
+  .orbit-ring:nth-child(1) { inset:0; border-width:2px; border-color:rgba(124,58,237,0.7) transparent transparent transparent; animation-duration:4s; }
+  .orbit-ring:nth-child(2) { inset:8px; border-width:1.5px; border-color:rgba(6,182,212,0.7) transparent rgba(6,182,212,0.7) transparent; animation-duration:3s; animation-direction:reverse; }
+  .orbit-ring:nth-child(3) { inset:16px; border-width:1.5px; border-color:rgba(245,158,11,0.8) transparent transparent transparent; animation-duration:2s; }
+  .orbit-center {
+    position:absolute; inset:22px;
+    background:radial-gradient(circle, #5b21b6, #3730a3);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',sans-serif; font-weight:900; font-size:13px;
+    color:var(--sky);
+    box-shadow:0 0 15px rgba(0,200,248,0.4);
+  }
+  .orbit-dot {
+    position:absolute; width:5px; height:5px; border-radius:50%;
+    background:var(--sky); box-shadow:0 0 8px var(--sky);
+  }
+
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .logo-text {
+    font-family:'Orbitron',sans-serif; font-size:clamp(22px,5vw,38px); font-weight:900;
+    letter-spacing:2px;
+  }
+  .logo-text span:first-child { color:#fff; }
+  .logo-text span:last-child {
+    background:linear-gradient(90deg, #a78bfa, var(--sky));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .hero-badge {
+    display:inline-block;
+    background:rgba(0,200,248,0.1); border:1px solid rgba(0,200,248,0.3);
+    border-radius:30px; padding:6px 20px; font-size:12px; letter-spacing:3px;
+    color:var(--sky); text-transform:uppercase; margin-bottom:22px;
+    font-family:'Orbitron',sans-serif;
+  }
+
+  .hero h1 {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(20px,4.5vw,46px); font-weight:900;
+    line-height:1.15; margin-bottom:16px;
+  }
+  .hero h1 .gradient {
+    background:linear-gradient(90deg, var(--sky), #a78bfa, var(--blue));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .hero p {
+    font-size:clamp(15px,2.5vw,19px); color:rgba(200,220,255,0.7);
+    max-width:560px; margin:0 auto 40px; line-height:1.7; font-weight:300;
+  }
+
+  .scroll-hint {
+    margin-top:10px; color:rgba(0,200,248,0.5); font-size:13px;
+    letter-spacing:2px; animation: bounce 2s infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(6px)} }
+
+  /* CARD SELECTOR */
+  .section-title {
+    text-align:center; margin-bottom:40px;
+  }
+  .section-title h2 {
+    font-family:'Orbitron',sans-serif; font-size:clamp(16px,3vw,28px);
+    font-weight:700; margin-bottom:8px;
+  }
+  .section-title p { color:rgba(200,220,255,0.5); font-size:15px; }
+
+  .cards-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap:16px; margin-bottom:60px;
+  }
+
+  .card-type-btn {
+    background:var(--glass); border:1px solid var(--border);
+    border-radius:16px; padding:24px 16px; text-align:center;
+    cursor:pointer; transition:all 0.3s ease;
+    position:relative; overflow:hidden;
+    backdrop-filter:blur(8px);
+  }
+  .card-type-btn::before {
+    content:''; position:absolute; inset:0; opacity:0;
+    transition:opacity 0.3s;
+    background:linear-gradient(135deg, rgba(0,200,248,0.12), rgba(124,58,237,0.12));
+  }
+  .card-type-btn:hover::before, .card-type-btn.active::before { opacity:1; }
+  .card-type-btn:hover, .card-type-btn.active {
+    border-color:var(--sky);
+    transform:translateY(-4px);
+    box-shadow:0 12px 40px rgba(0,200,248,0.2);
+  }
+  .card-type-btn .icon {
+    font-size:34px; margin-bottom:10px; display:block;
+  }
+  .card-type-btn .label {
+    font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:1px; color:var(--white); text-transform:uppercase;
+  }
+  .card-type-btn .desc {
+    font-size:12px; color:rgba(200,220,255,0.5); margin-top:5px; font-weight:300;
+  }
+
+  /* QUESTION FORM */
+  .question-panel {
+    max-width:660px; margin:0 auto 60px;
+    background:rgba(7,21,48,0.9); border:1px solid var(--border);
+    border-radius:24px; padding:40px; display:none;
+    backdrop-filter:blur(16px);
+    box-shadow:0 24px 80px rgba(0,0,0,0.5);
+  }
+  .question-panel.active { display:block; animation:fadeSlide 0.4s ease; }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  .q-step {
+    margin-bottom:28px; display:none;
+    animation:fadeSlide 0.3s ease;
+  }
+  .q-step.active { display:block; }
+
+  .q-label {
+    font-family:'Orbitron',sans-serif; font-size:13px; font-weight:700;
+    color:var(--sky); letter-spacing:1px; text-transform:uppercase;
+    margin-bottom:6px; display:block;
+  }
+  .q-sublabel {
+    font-size:15px; color:rgba(200,220,255,0.8); margin-bottom:14px; font-weight:300;
+  }
+
+  .q-input, .q-textarea {
+    width:100%;
+    background:rgba(0,200,248,0.05); border:1px solid rgba(0,200,248,0.2);
+    border-radius:12px; padding:14px 18px;
+    color:var(--white); font-family:'Rajdhani',sans-serif; font-size:16px;
+    outline:none; transition:all 0.25s;
+    resize:none;
+  }
+  .q-input:focus, .q-textarea:focus {
+    border-color:var(--sky); box-shadow:0 0 0 3px rgba(0,200,248,0.1);
+    background:rgba(0,200,248,0.08);
+  }
+  .q-textarea { min-height:110px; line-height:1.6; }
+
+  .q-progress {
+    display:flex; gap:6px; margin-bottom:28px;
+  }
+  .q-dot {
+    height:4px; flex:1; border-radius:4px;
+    background:rgba(0,200,248,0.15); transition:background 0.3s;
+  }
+  .q-dot.done { background:var(--sky); }
+
+  .btn {
+    font-family:'Orbitron',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:1.5px; text-transform:uppercase;
+    padding:14px 32px; border-radius:12px; border:none; cursor:pointer;
+    transition:all 0.25s;
+  }
+  .btn-primary {
+    background:linear-gradient(135deg, var(--blue), var(--sky));
+    color:#fff; box-shadow:0 6px 24px rgba(0,200,248,0.25);
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,200,248,0.4); }
+  .btn-outline {
+    background:transparent; color:rgba(200,220,255,0.6);
+    border:1px solid rgba(200,220,255,0.2);
+  }
+  .btn-outline:hover { border-color:var(--sky); color:var(--sky); }
+
+  .btn-row { display:flex; gap:12px; justify-content:flex-end; margin-top:24px; flex-wrap:wrap; }
+
+  /* RESULT CARD */
+  .result-section {
+    max-width:680px; margin:0 auto 80px; display:none;
+  }
+  .result-section.active { display:block; animation:fadeSlide 0.5s ease; }
+
+  .result-title {
+    text-align:center; margin-bottom:28px;
+    font-family:'Orbitron',sans-serif; font-size:18px; font-weight:700;
+    color:var(--sky);
+  }
+
+  /* ===== CARD TEMPLATES ===== */
+  #generated-card {
+    width:100%; max-width:600px; margin:0 auto;
+    border-radius:24px; overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,0.6);
+    position:relative;
+  }
+
+  /* Base card style */
+  .gen-card {
+    padding:40px 36px; min-height:380px;
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+
+  /* PERSONAL CARD - dark navy with cyan accents */
+  .card-personal {
+    background:linear-gradient(145deg, #060f28 0%, #0a1a3e 60%, #071030 100%);
+    border:1px solid rgba(0,200,248,0.3);
+  }
+  .card-personal::before {
+    content:''; position:absolute; top:-40px; right:-40px;
+    width:220px; height:220px; border-radius:50%;
+    background:radial-gradient(circle, rgba(0,200,248,0.12), transparent 70%);
+  }
+  .card-personal::after {
+    content:''; position:absolute; bottom:-30px; left:-30px;
+    width:160px; height:160px; border-radius:50%;
+    background:radial-gradient(circle, rgba(26,79,214,0.2), transparent 70%);
+  }
+
+  /* GOAL CARD - purple cosmic */
+  .card-goal {
+    background:linear-gradient(145deg, #0e0520 0%, #1a0940 60%, #0c0630 100%);
+    border:1px solid rgba(124,58,237,0.4);
+  }
+  .card-goal::before {
+    content:''; position:absolute; top:0; right:0;
+    width:300px; height:300px;
+    background:radial-gradient(ellipse at top right, rgba(124,58,237,0.2), transparent 60%);
+  }
+
+  /* WISH CARD - golden star */
+  .card-wish {
+    background:linear-gradient(145deg, #150a00 0%, #1f1200 60%, #0d0800 100%);
+    border:1px solid rgba(245,158,11,0.35);
+  }
+  .card-wish::before {
+    content:''; position:absolute; top:-50px; left:50%; transform:translateX(-50%);
+    width:250px; height:250px; border-radius:50%;
+    background:radial-gradient(circle, rgba(245,158,11,0.15), transparent 65%);
+  }
+
+  /* PRESIDENT CARD - red & gold power */
+  .card-president {
+    background:linear-gradient(145deg, #0d0005 0%, #1a000b 60%, #0a0005 100%);
+    border:1px solid rgba(239,68,68,0.35);
+  }
+  .card-president::before {
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at top, rgba(239,68,68,0.1), transparent 50%),
+      radial-gradient(ellipse at bottom, rgba(245,158,11,0.08), transparent 50%);
+  }
+
+  /* CHANGE WORLD CARD - green earth */
+  .card-world {
+    background:linear-gradient(145deg, #001a10 0%, #002a18 60%, #001208 100%);
+    border:1px solid rgba(16,185,129,0.35);
+  }
+  .card-world::before {
+    content:''; position:absolute; right:-20px; top:50%; transform:translateY(-50%);
+    width:220px; height:220px; border-radius:50%;
+    background:radial-gradient(circle, rgba(16,185,129,0.12), transparent 65%);
+  }
+
+  /* MOVIE CHARACTER - cinematic dark */
+  .card-movie {
+    background:linear-gradient(145deg, #0a0612 0%, #150920 60%, #080410 100%);
+    border:1px solid rgba(167,139,250,0.4);
+  }
+  .card-movie::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg, #7c3aed, #a78bfa, var(--sky));
+  }
+
+  /* BIG BRAIN IDEA - electric yellow */
+  .card-idea {
+    background:linear-gradient(145deg, #0d0f00 0%, #181a00 60%, #0a0c00 100%);
+    border:1px solid rgba(234,179,8,0.4);
+  }
+  .card-idea::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at center, rgba(234,179,8,0.07), transparent 60%);
+  }
+
+  /* BUCKET LIST / DIE GOALS - adventure red orange */
+  .card-bucket {
+    background:linear-gradient(145deg, #150600 0%, #1e0a00 60%, #100400 100%);
+    border:1px solid rgba(249,115,22,0.4);
+  }
+  .card-bucket::before {
+    content:''; position:absolute; bottom:0; right:0;
+    width:200px; height:200px; border-radius:50%;
+    background:radial-gradient(circle, rgba(249,115,22,0.12), transparent 65%);
+  }
+
+  /* LEGACY CARD - silver & navy prestige */
+  .card-legacy {
+    background:linear-gradient(145deg, #050810 0%, #0a1020 60%, #050810 100%);
+    border:1px solid rgba(148,163,184,0.4);
+  }
+  .card-legacy::before {
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(148,163,184,0.08), transparent 40%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,200,248,0.06), transparent 40%);
+  }
+
+  /* OPINION CARD - bold orange-red */
+  .card-opinion {
+    background:linear-gradient(145deg, #0f0500 0%, #1a0800 60%, #0a0400 100%);
+    border:1px solid rgba(251,146,60,0.4);
+  }
+  .card-opinion::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:linear-gradient(180deg, #ef4444, #fb923c, #fbbf24);
+  }
+
+  /* JOKE CARD - fun teal & pink */
+  .card-joke {
+    background:linear-gradient(145deg, #001515 0%, #002020 60%, #001010 100%);
+    border:1px solid rgba(20,184,166,0.4);
+  }
+  .card-joke::before {
+    content:''; position:absolute; top:-30px; right:-30px;
+    width:180px; height:180px; border-radius:50%;
+    background:radial-gradient(circle, rgba(236,72,153,0.12), transparent 65%);
+  }
+  .card-joke::after {
+    content:''; position:absolute; bottom:-30px; left:-30px;
+    width:150px; height:150px; border-radius:50%;
+    background:radial-gradient(circle, rgba(20,184,166,0.12), transparent 65%);
+  }
+
+  /* Card inner content */
+  .card-header {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:24px; position:relative; z-index:1;
+  }
+  .card-type-tag {
+    font-family:'Orbitron',sans-serif; font-size:9px; font-weight:700;
+    letter-spacing:2.5px; text-transform:uppercase;
+    padding:5px 14px; border-radius:20px;
+    border:1px solid; opacity:0.85;
+  }
+  .card-mini-logo {
+    display:flex; align-items:center; gap:8px; opacity:0.7;
+  }
+  .card-mini-logo .mini-orbit {
+    width:22px; height:22px; position:relative;
+  }
+  .card-mini-logo .mini-orbit::before, .card-mini-logo .mini-orbit::after {
+    content:''; position:absolute; border-radius:50%;
+    border:1px solid rgba(0,200,248,0.5);
+  }
+  .card-mini-logo .mini-orbit::before { inset:0; }
+  .card-mini-logo .mini-orbit::after { inset:5px; border-color:rgba(124,58,237,0.5); }
+  .card-mini-logo .mini-n {
+    position:absolute; inset:8px; background:rgba(124,58,237,0.8); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',sans-serif; font-size:6px; font-weight:900; color:var(--sky);
+  }
+  .card-mini-logo .mini-name {
+    font-family:'Orbitron',sans-serif; font-size:8px; font-weight:700;
+    letter-spacing:1px;
+  }
+  .card-mini-logo .mini-name span:last-child {
+    background:linear-gradient(90deg,#a78bfa,var(--sky));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .card-icon-big {
+    font-size:48px; margin-bottom:14px; position:relative; z-index:1;
+  }
+
+  .card-main-name {
+    font-family:'Orbitron',sans-serif; font-size:clamp(18px,4vw,28px); font-weight:900;
+    margin-bottom:6px; position:relative; z-index:1; line-height:1.2;
+  }
+
+  .card-sub {
+    font-size:13px; opacity:0.5; letter-spacing:1px; text-transform:uppercase;
+    margin-bottom:20px; position:relative; z-index:1;
+  }
+
+  .card-divider {
+    height:1px; background:currentColor; opacity:0.12;
+    margin:18px 0; position:relative; z-index:1;
+  }
+
+  .card-field {
+    margin-bottom:14px; position:relative; z-index:1;
+  }
+  .card-field-label {
+    font-family:'Orbitron',sans-serif; font-size:8px; letter-spacing:2px;
+    text-transform:uppercase; opacity:0.45; margin-bottom:5px;
+  }
+  .card-field-value {
+    font-size:15px; font-weight:400; line-height:1.5; opacity:0.9;
+    font-family:'Exo 2',sans-serif;
+  }
+
+  .card-footer {
+    margin-top:auto; display:flex; align-items:center; justify-content:space-between;
+    padding-top:18px; border-top:1px solid rgba(255,255,255,0.06);
+    position:relative; z-index:1;
+  }
+  .card-footer-left { font-size:11px; opacity:0.3; letter-spacing:1px; font-family:'Orbitron',sans-serif; }
+  .card-footer-right { font-size:11px; opacity:0.3; font-family:'Orbitron',sans-serif; letter-spacing:1px; }
+
+  /* Accent grid lines */
+  .card-grid {
+    position:absolute; inset:0; z-index:0; opacity:0.03;
+    background-image:
+      linear-gradient(rgba(255,255,255,1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px);
+    background-size:40px 40px;
+  }
+
+  /* Download & restart */
+  .action-row {
+    display:flex; gap:14px; justify-content:center; margin-top:28px; flex-wrap:wrap;
+  }
+  .btn-download {
+    background:linear-gradient(135deg, #1a4fd6, var(--sky));
+    color:#fff; box-shadow:0 6px 24px rgba(0,200,248,0.3);
+  }
+  .btn-download:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,200,248,0.5); }
+  .btn-restart {
+    background:transparent; color:rgba(200,220,255,0.6);
+    border:1px solid rgba(200,220,255,0.2);
+  }
+  .btn-restart:hover { border-color:var(--sky); color:var(--sky); }
+
+  /* Generating loader */
+  .generating {
+    text-align:center; padding:40px 20px;
+  }
+  .gen-spinner {
+    width:50px; height:50px; border-radius:50%;
+    border:3px solid rgba(0,200,248,0.1);
+    border-top:3px solid var(--sky);
+    animation:spin 0.8s linear infinite;
+    margin:0 auto 16px;
+  }
+  .gen-text {
+    font-family:'Orbitron',sans-serif; font-size:12px;
+    letter-spacing:2px; color:var(--sky); animation:pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+  /* Section spacing */
+  .section { padding:20px 0 60px; }
+
+  /* Mobile adjustments */
+  @media(max-width:600px) {
+    .hero { padding:40px 16px 30px; }
+    .question-panel { padding:26px 18px; }
+    .gen-card { padding:28px 22px; }
+    .cards-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+    .card-type-btn { padding:18px 10px; }
+    .card-type-btn .icon { font-size:26px; }
+    .action-row { flex-direction:column; align-items:center; }
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+
+<!-- HERO -->
+<div class="container">
+  <section class="hero">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring"></div>
+        <div class="orbit-dot" style="top:2px;left:50%;transform:translateX(-50%)"></div>
+        <div class="orbit-dot" style="bottom:9px;left:5px;background:#a78bfa;box-shadow:0 0 6px #a78bfa"></div>
+        <div class="orbit-center">N</div>
+      </div>
+      <div class="logo-text">
+        <span>NEURO</span><span>CULAS</span>
+      </div>
+    </div>
+    <div class="hero-badge">✦ Dev and Automation ✦</div>
+    <h1>Welcome to <span class="gradient">Neuroculas</span><br>Card Generator</h1>
+    <p>This is our very first project — pick a card type, answer a few fun questions, and we'll generate a beautifully designed card just for you.</p>
+    <div class="scroll-hint">↓ Choose Your Card Below ↓</div>
+  </section>
+
+  <!-- CARD TYPE SELECTION -->
+  <section class="section">
+    <div class="section-title">
+      <h2>Select Your Card Type</h2>
+     
+    </div>
+    <div class="cards-grid" id="cardsGrid">
+      <div class="card-type-btn" onclick="selectCard('personal')">
+        <span class="icon">🪪</span>
+        <div class="label">Personal Card</div>
+        <div class="desc">Your identity, your story</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('goal')">
+        <span class="icon">🎯</span>
+        <div class="label">Goal Card</div>
+        <div class="desc">Save your big dream</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('wish')">
+        <span class="icon">💭</span>
+        <div class="label">Wish Card</div>
+        <div class="desc">Your heart's desire</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('president')">
+        <span class="icon">🏛️</span>
+        <div class="label">President Card</div>
+        <div class="desc">If you ruled the world</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('world')">
+        <span class="icon">🌍</span>
+        <div class="label">Change The World</div>
+        <div class="desc">Your one big fix</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('movie')">
+        <span class="icon">🎬</span>
+        <div class="label">Movie Character</div>
+        <div class="desc">Which character are you?</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('idea')">
+        <span class="icon">🧠</span>
+        <div class="label">Big Brain Idea</div>
+        <div class="desc">Your wildest invention</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('bucket')">
+        <span class="icon">🌙</span>
+        <div class="label">Bucket List</div>
+        <div class="desc">Before you leave earth</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('legacy')">
+        <span class="icon">👑</span>
+        <div class="label">Legacy Card</div>
+        <div class="desc">How you'll be remembered</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('opinion')">
+        <span class="icon">😤</span>
+        <div class="label">Opinion Card</div>
+        <div class="desc">Your boldest take</div>
+      </div>
+      <div class="card-type-btn" onclick="selectCard('joke')" style="grid-column:span 1">
+        <span class="icon">😂</span>
+        <div class="label">Joke Card</div>
+        <div class="desc">Make the world laugh</div>
+      </div>
+    </div>
+
+    <!-- QUESTION PANEL -->
+    <div class="question-panel" id="questionPanel">
+      <div class="q-progress" id="qProgress"></div>
+      <div id="questionsContainer"></div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="result-section" id="resultSection">
+      <div class="result-title">✦ Your Card is Ready ✦</div>
+      <div id="generated-card"></div>
+      <div class="action-row">
+        <button class="btn btn-download btn-primary" onclick="downloadCard()">⬇ Download JPG</button>
+        <button class="btn btn-restart btn-outline" onclick="restartApp()">↺ Make Another Card</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const CARDS = {
+  personal: {
+    label:'Personal Card', icon:'🪪', cls:'card-personal',
+    tagColor:'rgba(0,200,248,0.8)', tagBg:'rgba(0,200,248,0.1)',
+    accent:'#00c8f8',
+    questions:[
+      {id:'name', label:'Your Name', q:'What is your full name?', placeholder:'e.g. Alex Johnson', type:'input'},
+      {id:'title', label:'Who You Are', q:'What do you do / your title?', placeholder:'e.g. Designer, Student, Dreamer', type:'input'},
+      {id:'motto', label:'Your Motto', q:'What quote inspires you the most?', placeholder:'e.g. Keep pushing, never stop', type:'textarea'},
+      {id:'fact', label:'Fun Fact', q:'Share one interesting fact about yourself.', placeholder:'e.g. I can solve a Rubik\'s cube blindfolded', type:'input'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:${this.accent};color:${this.accent};background:rgba(0,200,248,0.08)">🪪 Personal</div>
+          ${miniLogo()}
+        </div>
+        <div class="card-icon-big">🪪</div>
+        <div class="card-main-name" style="color:#00c8f8">${d.name}</div>
+        <div class="card-sub">${d.title}</div>
+        <div class="card-divider" style="color:#00c8f8"></div>
+        <div class="card-field">
+          <div class="card-field-label">Motto</div>
+          <div class="card-field-value">"${d.motto}"</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">Fun Fact</div>
+          <div class="card-field-value">${d.fact}</div>
+        </div>
+        ${cardFooter()}
+      `;
+    }
+  },
+
+  goal: {
+    label:'Goal Card', icon:'🎯', cls:'card-goal',
+    accent:'#a78bfa',
+    questions:[
+      {id:'name', label:'Your Name', q:'What is your name?', placeholder:'Your name', type:'input'},
+      {id:'goal', label:'Your Big Goal', q:'What is your #1 goal in life?', placeholder:'e.g. Build a tech company that changes lives', type:'textarea'},
+      {id:'deadline', label:'Deadline', q:'By when will you achieve this goal?', placeholder:'e.g. Before I turn 30, By 2028', type:'input'},
+      {id:'why', label:'Your Why', q:'Why does this goal matter to you?', placeholder:'e.g. To give my family a better life', type:'textarea'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#a78bfa;color:#a78bfa;background:rgba(124,58,237,0.1)">🎯 Goal</div>
+          ${miniLogo()}
+        </div>
+        <div class="card-icon-big">🎯</div>
+        <div class="card-main-name" style="color:#a78bfa">${d.name}</div>
+        <div class="card-sub">Has a mission</div>
+        <div class="card-divider" style="color:#a78bfa"></div>
+        <div class="card-field">
+          <div class="card-field-label">The Big Goal</div>
+          <div class="card-field-value">${d.goal}</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">Deadline</div>
+          <div class="card-field-value" style="color:#a78bfa;font-weight:700">${d.deadline}</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">The Why</div>
+          <div class="card-field-value">${d.why}</div>
+        </div>
+        ${cardFooter()}
+      `;
+    }
+  },
+
+  wish: {
+    label:'Wish Card', icon:'💭', cls:'card-wish',
+    accent:'#f59e0b',
+    questions:[
+      {id:'name', label:'Your Name', q:'What is your name?', placeholder:'Your name', type:'input'},
+      {id:'wish', label:'Your Wish', q:'If you had one wish, what would it be?', placeholder:'e.g. I wish the whole world had clean water', type:'textarea'},
+      {id:'why', label:'Your Reason', q:'Why is this wish so special to you?', placeholder:'e.g. Because no child should suffer from thirst', type:'textarea'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div style="text-align:center;margin-bottom:8px;font-size:56px;position:relative;z-index:1">✨</div>
+        <div class="card-header" style="justify-content:center">
+          <div class="card-type-tag" style="border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,0.1)">💭 Wish Card</div>
+        </div>
+        <div class="card-main-name" style="color:#f59e0b;text-align:center;margin:16px 0 6px">${d.name}'s Wish</div>
+        <div class="card-divider" style="color:#f59e0b"></div>
+        <div class="card-field">
+          <div class="card-field-label" style="text-align:center">If I Had One Wish</div>
+          <div class="card-field-value" style="text-align:center;font-style:italic;font-size:17px">"${d.wish}"</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label" style="text-align:center">Because</div>
+          <div class="card-field-value" style="text-align:center">${d.why}</div>
+        </div>
+        <div class="card-footer" style="justify-content:center">
+          ${miniLogo()}
+        </div>
+      `;
+    }
+  },
+
+  president: {
+    label:'President Card', icon:'🏛️', cls:'card-president',
+    accent:'#ef4444',
+    questions:[
+      {id:'name', label:'Your Name', q:'What is your name, future President?', placeholder:'Your full name', type:'input'},
+      {id:'country', label:'Country/Region', q:'Which country or region would you lead?', placeholder:'e.g. Bangladesh, The World, My City', type:'input'},
+      {id:'law1', label:'First Law', q:'What is the FIRST law you would pass?', placeholder:'e.g. Free internet for every citizen', type:'textarea'},
+      {id:'abolish', label:'Abolish This', q:'What is one major issue you would end first?', placeholder:'e.g. Homework, Traffic jams, Plastic bags', type:'input'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#ef4444;color:#ef4444;background:rgba(239,68,68,0.1)">🏛️ President</div>
+          ${miniLogo()}
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;position:relative;z-index:1">
+          <div style="font-size:50px">🏛️</div>
+          <div>
+            <div class="card-main-name" style="color:#f59e0b">President ${d.name}</div>
+            <div class="card-sub">of ${d.country}</div>
+          </div>
+        </div>
+        <div class="card-divider" style="color:#ef4444"></div>
+        <div class="card-field">
+          <div class="card-field-label">First Law</div>
+          <div class="card-field-value">${d.law1}</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">Will Abolish</div>
+          <div class="card-field-value" style="color:#ef4444">✕ ${d.abolish}</div>
+        </div>
+        ${cardFooter()}
+      `;
+    }
+  },
+
+  world: {
+    label:'Change The World', icon:'🌍', cls:'card-world',
+    accent:'#10b981',
+    questions:[
+      {id:'name', label:'Your Name', q:'What is your name?', placeholder:'Your name', type:'input'},
+      {id:'problem', label:'The Problem', q:'What is the ONE problem in the world you would fix?', placeholder:'e.g. Climate change, Poverty, Education gaps', type:'input'},
+      {id:'how', label:'How You\'d Fix It', q:'How would YOU fix this problem?', placeholder:'e.g. I would build solar-powered schools in every village', type:'textarea'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#10b981;color:#10b981;background:rgba(16,185,129,0.1)">🌍 Change The World</div>
+          ${miniLogo()}
+        </div>
+        <div class="card-icon-big">🌍</div>
+        <div class="card-main-name" style="color:#10b981">${d.name}</div>
+        <div class="card-sub">World Changer</div>
+        <div class="card-divider" style="color:#10b981"></div>
+        <div class="card-field">
+          <div class="card-field-label">Problem to Fix</div>
+          <div class="card-field-value" style="color:#10b981;font-weight:700;font-size:18px">${d.problem}</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">My Plan</div>
+          <div class="card-field-value">${d.how}</div>
+        </div>
+        ${cardFooter()}
+      `;
+    }
+  },
+
+  movie: {
+    label:'Movie Character', icon:'🎬', cls:'card-movie',
+    accent:'#a78bfa',
+    questions:[
+      {id:'name', label:'Your Name', q:'What is your real name?', placeholder:'Your name', type:'input'},
+      {id:'character', label:'The Character', q:'Which movie character would you be?', placeholder:'e.g. Tony Stark, Hermione Granger, Simba', type:'input'},
+      {id:'movie', label:'The Movie', q:'What movie/show is this character from?', placeholder:'e.g. Iron Man, Harry Potter', type:'input'},
+      {id:'why', label:'Why Them?', q:'Why are you most like this character?', placeholder:'e.g. I never give up no matter how hard things get', type:'textarea'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#a78bfa;color:#a78bfa;background:rgba(167,139,250,0.1)">🎬 Movie Character</div>
+          ${miniLogo()}
+        </div>
+        <div style="position:relative;z-index:1;margin-bottom:16px">
+          <div style="font-size:14px;color:rgba(200,220,255,0.4);letter-spacing:2px;text-transform:uppercase;font-family:'Orbitron',sans-serif;font-size:9px">${d.name} would be</div>
+          <div class="card-main-name" style="color:#a78bfa;font-size:clamp(22px,5vw,34px)">${d.character}</div>
+          <div style="font-size:13px;color:rgba(200,220,255,0.5);margin-top:4px">from <em>${d.movie}</em></div>
+        </div>
+        <div class="card-divider" style="color:#a78bfa"></div>
+        <div class="card-field">
+          <div class="card-field-label">Why</div>
+          <div class="card-field-value" style="font-style:italic">"${d.why}"</div>
+        </div>
+        <div style="font-size:42px;text-align:right;position:relative;z-index:1;margin-top:auto">🎬</div>
+        ${cardFooter()}
+      `;
+    }
+  },
+
+  idea: {
+    label:'Big Brain Idea', icon:'🧠', cls:'card-idea',
+    accent:'#eab308',
+    questions:[
+      {id:'name', label:'Your Name', q:'Inventor\'s name?', placeholder:'Your name', type:'input'},
+      {id:'idea', label:'The Idea', q:'What is your wildest invention or business idea?', placeholder:'e.g. Glasses that translate any language in real-time', type:'textarea'},
+      {id:'problem', label:'Problem it Solves', q:'What problem does your idea solve?', placeholder:'e.g. Language barriers between people worldwide', type:'input'},
+      {id:'tagline', label:'Tagline', q:'Give your idea a catchy tagline!', placeholder:'e.g. "Speak every language, know no limits"', type:'input'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#eab308;color:#eab308;background:rgba(234,179,8,0.1)">🧠 Big Brain Idea</div>
+          ${miniLogo()}
+        </div>
+        <div class="card-icon-big">💡</div>
+        <div class="card-main-name" style="color:#eab308">${d.name}'s Big Idea</div>
+        <div class="card-sub">${d.tagline}</div>
+        <div class="card-divider" style="color:#eab308"></div>
+        <div class="card-field">
+          <div class="card-field-label">The Invention</div>
+          <div class="card-field-value">${d.idea}</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">Problem Solved</div>
+          <div class="card-field-value" style="color:#eab308">✓ ${d.problem}</div>
+        </div>
+        ${cardFooter()}
+      `;
+    }
+  },
+
+  bucket: {
+    label:'Bucket List', icon:'🌙', cls:'card-bucket',
+    accent:'#f97316',
+    questions:[
+      {id:'name', label:'Your Name', q:'Your name?', placeholder:'Your name', type:'input'},
+      {id:'one', label:'#1 Dream', q:'Your #1 thing to do before you leave earth?', placeholder:'e.g. Watch the northern lights in Iceland', type:'input'},
+      {id:'two', label:'#2 Dream', q:'Your #2 bucket list dream?', placeholder:'e.g. Skydive over the Sahara', type:'input'},
+      {id:'three', label:'#3 Dream', q:'Your #3 bucket list dream?', placeholder:'e.g. Write a book that changes lives', type:'input'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#f97316;color:#f97316;background:rgba(249,115,22,0.1)">🌙 Bucket List</div>
+          ${miniLogo()}
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;position:relative;z-index:1">
+          <div style="font-size:44px">🌙</div>
+          <div>
+            <div class="card-main-name" style="color:#f97316">${d.name}</div>
+            <div class="card-sub">Before I Leave Earth</div>
+          </div>
+        </div>
+        <div class="card-divider" style="color:#f97316"></div>
+        <div class="card-field" style="position:relative;z-index:1">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="color:#f97316;font-family:'Orbitron',sans-serif;font-weight:900;font-size:14px;min-width:24px">01</span>
+              <div class="card-field-value">${d.one}</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="color:#f97316;font-family:'Orbitron',sans-serif;font-weight:900;font-size:14px;min-width:24px">02</span>
+              <div class="card-field-value">${d.two}</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="color:#f97316;font-family:'Orbitron',sans-serif;font-weight:900;font-size:14px;min-width:24px">03</span>
+              <div class="card-field-value">${d.three}</div>
+            </div>
+          </div>
+        </div>
+        ${cardFooter()}
+      `;
+    }
+  },
+
+  legacy: {
+    label:'Legacy Card', icon:'👑', cls:'card-legacy',
+    accent:'#94a3b8',
+    questions:[
+      {id:'name', label:'Your Name', q:'Your name?', placeholder:'Your name', type:'input'},
+      {id:'legacy', label:'Your Legacy', q:'How do you want to be remembered by the world?', placeholder:'e.g. As someone who made technology accessible to everyone', type:'textarea'},
+      {id:'contribution', label:'Your Contribution', q:'What is the one thing you want to contribute to humanity?', placeholder:'e.g. A platform that connects lonely people worldwide', type:'textarea'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#94a3b8;color:#94a3b8;background:rgba(148,163,184,0.1)">👑 Legacy</div>
+          ${miniLogo()}
+        </div>
+        <div style="text-align:center;position:relative;z-index:1;margin-bottom:14px">
+          <div style="font-size:52px">👑</div>
+          <div class="card-main-name" style="color:#94a3b8;margin-top:10px">${d.name}</div>
+          <div class="card-sub">The Legacy</div>
+        </div>
+        <div class="card-divider" style="color:#94a3b8"></div>
+        <div class="card-field">
+          <div class="card-field-label" style="text-align:center">To Be Remembered As</div>
+          <div class="card-field-value" style="text-align:center;font-style:italic;font-size:16px">"${d.legacy}"</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label" style="text-align:center">My Contribution</div>
+          <div class="card-field-value" style="text-align:center">${d.contribution}</div>
+        </div>
+        <div class="card-footer" style="justify-content:center">
+          ${miniLogo()}
+        </div>
+      `;
+    }
+  },
+
+  opinion: {
+    label:'Opinion Card', icon:'😤', cls:'card-opinion',
+    accent:'#fb923c',
+    questions:[
+      {id:'name', label:'Your Name', q:'Who dares to have this opinion?', placeholder:'Your name', type:'input'},
+      {id:'opinion', label:'The Opinion', q:'What is your most unpopular or bold opinion?', placeholder:'e.g. Pineapple absolutely belongs on pizza', type:'textarea'},
+      {id:'defend', label:'Your Defense', q:'Defend your opinion in one sentence!', placeholder:'e.g. Sweet + savory is a flavor combination that science supports', type:'textarea'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#fb923c;color:#fb923c;background:rgba(251,146,60,0.1)">😤 Hot Take</div>
+          ${miniLogo()}
+        </div>
+        <div style="position:relative;z-index:1;margin:12px 0 20px;padding-left:16px">
+          <div style="font-size:10px;color:rgba(200,220,255,0.4);letter-spacing:2px;text-transform:uppercase;font-family:'Orbitron',sans-serif;margin-bottom:6px">${d.name} says:</div>
+          <div style="font-size:clamp(18px,4vw,26px);font-family:'Exo 2',sans-serif;font-weight:700;color:#fb923c;line-height:1.3">${d.opinion}</div>
+        </div>
+        <div class="card-divider" style="color:#fb923c"></div>
+        <div class="card-field">
+          <div class="card-field-label">The Defense</div>
+          <div class="card-field-value" style="font-style:italic">"${d.defend}"</div>
+        </div>
+        <div style="font-size:40px;margin-top:auto;position:relative;z-index:1">😤</div>
+        ${cardFooter()}
+      `;
+    }
+  },
+
+  joke: {
+    label:'Joke Card', icon:'😂', cls:'card-joke',
+    accent:'#14b8a6',
+    questions:[
+      {id:'name', label:'Your Name', q:'Who is the comedian?', placeholder:'Your name', type:'input'},
+      {id:'setup', label:'The Setup', q:'Write your joke setup (the first part of the joke)...', placeholder:'e.g. Why did the programmer quit his job?', type:'textarea'},
+      {id:'punchline', label:'The Punchline', q:'Now drop the punchline! 😂', placeholder:'e.g. Because he didn\'t get arrays!', type:'input'},
+      {id:'rating', label:'Self Rating', q:'How funny is this joke? Rate yourself honestly (1-10)', placeholder:'e.g. Honestly... a solid 9/10', type:'input'},
+    ],
+    render(d) {
+      return `
+        <div class="card-grid"></div>
+        <div class="card-header">
+          <div class="card-type-tag" style="border-color:#14b8a6;color:#14b8a6;background:rgba(20,184,166,0.1)">😂 Joke Card</div>
+          ${miniLogo()}
+        </div>
+        <div style="text-align:center;position:relative;z-index:1;margin-bottom:18px">
+          <div style="font-size:52px">😂</div>
+          <div style="font-size:12px;color:rgba(200,220,255,0.4);letter-spacing:2px;font-family:'Orbitron',sans-serif;margin-top:8px">${d.name}'s Joke</div>
+        </div>
+        <div style="background:rgba(20,184,166,0.06);border:1px solid rgba(20,184,166,0.2);border-radius:14px;padding:20px;position:relative;z-index:1;margin-bottom:14px">
+          <div class="card-field-value" style="color:rgba(200,220,255,0.8);margin-bottom:14px">${d.setup}</div>
+          <div style="height:1px;background:rgba(20,184,166,0.2);margin-bottom:14px"></div>
+          <div style="font-size:18px;font-weight:700;color:#14b8a6;font-family:'Exo 2',sans-serif">${d.punchline}</div>
+        </div>
+        <div style="text-align:right;font-size:12px;color:rgba(200,220,255,0.35);font-family:'Orbitron',sans-serif;position:relative;z-index:1">Self-rated: ${d.rating} / 10</div>
+        ${cardFooter()}
+      `;
+    }
+  }
+};
+
+function miniLogo() {
+  return `<div class="card-mini-logo">
+    <div class="mini-orbit" style="position:relative;width:22px;height:22px">
+      <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(0,200,248,0.4)"></div>
+      <div style="position:absolute;inset:5px;border-radius:50%;border:1px solid rgba(124,58,237,0.4)"></div>
+      <div style="position:absolute;inset:9px;border-radius:50%;background:rgba(124,58,237,0.8);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:5px;font-weight:900;color:#00c8f8">N</div>
+    </div>
+    <div class="mini-name" style="font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px">
+      <span style="color:#fff">NEURO</span><span style="background:linear-gradient(90deg,#a78bfa,#00c8f8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">CULAS</span>
+    </div>
+  </div>`;
+}
+
+function cardFooter() {
+  return `<div class="card-footer">
+    <div class="card-footer-left">NEUROCULAS</div>
+    <div class="card-footer-right">Dev and Automation</div>
+  </div>`;
+}
+
+// App state
+let selectedType = null;
+let currentStep = 0;
+let answers = {};
+
+function selectCard(type) {
+  selectedType = type;
+  currentStep = 0;
+  answers = {};
+
+  document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  document.getElementById('resultSection').classList.remove('active');
+  buildQuestions(type);
+
+  setTimeout(() => {
+    document.getElementById('questionPanel').scrollIntoView({behavior:'smooth', block:'center'});
+  }, 100);
+}
+
+function buildQuestions(type) {
+  const card = CARDS[type];
+  const qs = card.questions;
+  const container = document.getElementById('questionsContainer');
+  const progress = document.getElementById('qProgress');
+
+  // Progress dots
+  progress.innerHTML = qs.map((_, i) => `<div class="q-dot" id="dot${i}"></div>`).join('');
+
+  // Question steps
+  container.innerHTML = qs.map((q, i) => `
+    <div class="q-step ${i===0?'active':''}" id="step${i}">
+      <span class="q-label">${q.label}</span>
+      <div class="q-sublabel">${q.q}</div>
+      ${q.type==='textarea'
+        ? `<textarea class="q-textarea" id="ans${i}" placeholder="${q.placeholder}" rows="3"></textarea>`
+        : `<input class="q-input" id="ans${i}" placeholder="${q.placeholder}" />`
+      }
+    </div>
+  `).join('');
+
+  updateProgress();
+  document.getElementById('questionPanel').classList.add('active');
+}
+
+function updateProgress() {
+  const qs = CARDS[selectedType].questions;
+  qs.forEach((_, i) => {
+    const dot = document.getElementById(`dot${i}`);
+    if (dot) dot.className = `q-dot ${i <= currentStep ? 'done' : ''}`;
+  });
+}
+
+function nextStep() {
+  const card = CARDS[selectedType];
+  const qs = card.questions;
+  const input = document.getElementById(`ans${currentStep}`);
+  const val = input ? input.value.trim() : '';
+
+  if (!val) {
+    input.style.borderColor = '#ef4444';
+    input.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)';
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.style.boxShadow = '';
+    }, 800);
+    return;
+  }
+
+  answers[qs[currentStep].id] = val;
+
+  if (currentStep < qs.length - 1) {
+    document.getElementById(`step${currentStep}`).classList.remove('active');
+    currentStep++;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    updateProgress();
+    document.getElementById(`ans${currentStep}`).focus();
+  } else {
+    generateCard();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    document.getElementById(`step${currentStep}`).classList.remove('active');
+    currentStep--;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    updateProgress();
+  } else {
+    document.getElementById('questionPanel').classList.remove('active');
+    selectedType = null;
+    document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('active'));
+  }
+}
+
+function generateCard() {
+  document.getElementById('questionPanel').classList.remove('active');
+  const resultSection = document.getElementById('resultSection');
+  resultSection.classList.add('active');
+
+  const cardEl = document.getElementById('generated-card');
+  cardEl.innerHTML = `<div class="generating"><div class="gen-spinner"></div><div class="gen-text">GENERATING YOUR CARD...</div></div>`;
+
+  resultSection.scrollIntoView({behavior:'smooth', block:'center'});
+
+  setTimeout(() => {
+    const card = CARDS[selectedType];
+    cardEl.innerHTML = `
+      <div class="gen-card ${card.cls}" id="card-inner">
+        ${card.render(answers)}
+      </div>
+    `;
+  }, 900);
+}
+
+function downloadCard() {
+  const cardInner = document.getElementById('card-inner');
+  if (!cardInner) return;
+
+  const btn = event.currentTarget;
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+
+  html2canvas(cardInner, {
+    scale: 3,
+    useCORS: true,
+    backgroundColor: null,
+    logging: false
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = `neuroculas-${selectedType}-card.jpg`;
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
+    link.click();
+    btn.textContent = '⬇ Download JPG';
+    btn.disabled = false;
+  }).catch(() => {
+    btn.textContent = '⬇ Download JPG';
+    btn.disabled = false;
+  });
+}
+
+function restartApp() {
+  selectedType = null;
+  currentStep = 0;
+  answers = {};
+  document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('questionPanel').classList.remove('active');
+  document.getElementById('resultSection').classList.remove('active');
+  document.getElementById('cardsGrid').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('questionPanel').classList.contains('active')) {
+    const active = document.querySelector('.q-step.active');
+    if (active) {
+      const textarea = active.querySelector('textarea');
+      if (!textarea || !document.activeElement.isSameNode(textarea)) {
+        nextStep();
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
