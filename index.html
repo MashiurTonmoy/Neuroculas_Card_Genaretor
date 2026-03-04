@@ -789,7 +789,7 @@ const CARDS = {
       {id:'name', label:'Your Name', q:'What is your name, future President?', placeholder:'Your full name', type:'input'},
       {id:'country', label:'Country/Region', q:'Which country or region would you lead?', placeholder:'e.g. Bangladesh, The World, My City', type:'input'},
       {id:'law1', label:'First Law', q:'What is the FIRST law you would pass?', placeholder:'e.g. Free internet for every citizen', type:'textarea'},
-      {id:'abolish', label:'Abolish This', q:'What is one major issue you would end first?', placeholder:'e.g. Homework, Traffic jams, Plastic bags', type:'input'},
+      {id:'abolish', label:'Abolish This', q:'What is one major issue you would end first?', placeholder:'e.g. Corruption, Traffic jams, Pollution', type:'input'},
     ],
     render(d) {
       return `
@@ -1254,7 +1254,7 @@ function downloadCard() {
   if (!cardInner) return;
 
   const btn = event.currentTarget;
-  btn.textContent = 'Generating...';
+  btn.textContent = 'Downloading...';
   btn.disabled = true;
 
   html2canvas(cardInner, {
